@@ -7,8 +7,8 @@
 ![Release 下载总量](https://img.shields.io/github/downloads/nICEnnnnnnnLee/AcFunDown/total.svg?style=flat-square)
 
 AcFun 视频下载器，用于下载A站视频。  
-由[B站视频下载器改编而来](https://github.com/nICEnnnnnnnLee/BilibiliDown)  
 ===============================
+由[B站视频下载器](https://github.com/nICEnnnnnnnLee/BilibiliDown)改编而来  
 **以下多图警告**
 
 ## :smile:特性  

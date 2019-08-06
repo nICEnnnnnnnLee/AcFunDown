@@ -4,6 +4,7 @@
 */download
 *.zip
 *.log
+*.config
 *.bat
 *.flv
 *.mp4
