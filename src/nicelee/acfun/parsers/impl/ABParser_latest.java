@@ -17,14 +17,14 @@ import nicelee.acfun.util.HttpHeaders;
 import nicelee.acfun.util.Logger;
 
 @Acfun(name = "abParser", note = "番剧单集")
-public class ABParser extends AbstractBaseParser {
+public class ABParser_latest extends AbstractBaseParser {
 
-	private final static Pattern pattern = Pattern.compile("ab[0-9]+_[0-9]+_[0-9]+");
-	private String albumId_groupId_id;
+	private final static Pattern pattern = Pattern.compile("ab[0-9]+[^_]*");
+	private String albumId;
 
 	// public EPParser(HttpRequestUtil util,IParamSetter paramSetter, int pageSize)
 	// {
-	public ABParser(Object... obj) {
+	public ABParser_latest(Object... obj) {
 		super(obj);
 	}
 
@@ -33,19 +33,19 @@ public class ABParser extends AbstractBaseParser {
 		matcher = pattern.matcher(input);
 		boolean matches = matcher.find();
 		if (matches) {
-			albumId_groupId_id = matcher.group();
+			albumId = matcher.group();
 		}
 		return matches;
 	}
 
 	@Override
 	public String validStr(String input) {
-		return albumId_groupId_id;
+		return albumId;
 	}
 
 	@Override
 	public VideoInfo result(String input, int videoFormat, boolean getVideoLink) {
-		return getAVDetail(albumId_groupId_id, getVideoLink);
+		return getAVDetail(albumId, getVideoLink);
 	}
 
 	// "id":327107,"groupId":34168,"albumId":5024869,"jcContentId":10418187,"danmakuId":10441665
@@ -54,19 +54,27 @@ public class ABParser extends AbstractBaseParser {
 	// ?(.*?)</script>");
 	private final static Pattern pABVideoInfo = Pattern.compile("window.bangumiData ?= ?(.*?});");
 
-	protected VideoInfo getAVDetail(String albumId_groupId_id, boolean getVideoLink) {
-		// String[] IDs = albumId_groupId_id.split("_");
-
+	protected VideoInfo getAVDetail(String albumId, boolean getVideoLink) {
+		// 查询信息，得到groupId，构造 albumId_groupId_id
+		HttpHeaders headers = new HttpHeaders();
+		String infoUrl = "https://www.acfun.cn/album/abm/bangumis/video?albumId=" + albumId.replace("ab", "");
+		String strJson = util.getContent(infoUrl, headers.getCommonHeaders("www.acfun.cn"),
+						HttpCookies.getGlobalCookies());
+		JSONObject info = new JSONObject(strJson).getJSONObject("data");
+		JSONArray clips = info.getJSONArray("content");
+		JSONObject clipJson = clips.getJSONObject(clips.length() - 1).getJSONArray("videos").getJSONObject(0);
+		
+		final String albumId_groupId_id = String.format("%s_%d_%d", 
+				albumId, clipJson.getLong("groupId"), clipJson.getLong("id"));
+		
+		
 		VideoInfo viInfo = new VideoInfo();
 		viInfo.setVideoId(albumId_groupId_id);
 
 		// 获取json
-		HttpHeaders headers = new HttpHeaders();
-		String basicInfoUrl = String.format("https://www.acfun.cn/bangumi/%s", albumId_groupId_id);
+		String basicInfoUrl = String.format("https://www.acfun.cn/bangumi/%s", albumId);
 		String html = util.getContent(basicInfoUrl, headers.getCommonHeaders("www.acfun.cn"),
 				HttpCookies.getGlobalCookies());
-//		String basicInfoUrl = String.format("https://www.acfun.cn/album/abm/bangumis/video?albumId=%s&groupId=%s&num=1&size=1000&_=%d", 
-//				IDs[0].replace("ab", ""), IDs[1], System.currentTimeMillis());
 
 		Matcher matcher = pABVideoInfo.matcher(html);
 		matcher.find();
