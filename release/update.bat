@@ -14,7 +14,7 @@ taskkill /F /PID %pid%
 
 :copy
 :: 复制文件(不提示直接覆盖)
-copy /Y "update\INeedBiliAV.update.jar" "ILikeAcFun.jar"
+copy /Y "update\ILikeAcFun.update.jar" "ILikeAcFun.jar"
 
 if "%1"=="1" (echo 更新后重启 &goto :runApp) else (echo 仅更新 &goto :end)
 

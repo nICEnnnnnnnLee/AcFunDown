@@ -48,7 +48,7 @@ public class VersionManagerUtil {
 		for (int i = 0; i < assets.length(); i++) {
 			JSONObject asset = assets.getJSONObject(i);
 			String assetName = asset.getString("name");
-			if (assetName.startsWith("AcFunDown") && assetName.endsWith(".zip")) {
+			if (assetName.startsWith("AcfunDown") && assetName.endsWith(".zip")) {
 				downName = assetName;
 				downUrl = asset.getString("browser_download_url");
 				break;
