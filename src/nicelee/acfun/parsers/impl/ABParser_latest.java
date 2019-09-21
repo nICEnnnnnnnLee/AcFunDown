@@ -94,7 +94,8 @@ public class ABParser_latest extends AbstractBaseParser {
 		clip.setAvTitle(viInfo.getVideoName());
 		clip.setAvId(albumId_groupId_id);
 		clip.setcId(current.getLong("videoId"));
-		clip.setPage(clips.length() - 1);
+		clip.setPage(0);
+		clip.setRemark(clips.length() - 1);
 //			clip.setTitle(clipObj.getString("episodeName") + " " + clipObj.getString("newTitle"));
 		clip.setTitle(current.getString("title"));
 		clip.setPicPreview(current.getString("image"));

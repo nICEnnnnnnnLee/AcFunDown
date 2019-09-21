@@ -93,7 +93,8 @@ public class AAParser extends ABParser {
 			clip.setAvTitle(viInfo.getVideoName());
 			clip.setAvId(albumId_groupId_id);
 			clip.setcId(clipObj.getLong("videoId"));
-			clip.setPage(i);
+			clip.setPage(0);
+			clip.setRemark(i);
 //			clip.setTitle(clipObj.getString("episodeName") + " " + clipObj.getString("newTitle"));
 			clip.setTitle(clipObj.getString("newTitle"));
 			clip.setPicPreview(clipObj.getString("image"));

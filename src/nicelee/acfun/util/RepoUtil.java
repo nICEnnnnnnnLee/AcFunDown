@@ -45,6 +45,8 @@ public class RepoUtil {
 			buReader = new BufferedReader(new FileReader(fRepo));
 			String avRecord;
 			while ((avRecord = buReader.readLine()) != null) {
+				if(avRecord.contains("_"))
+					avRecord = avRecord.replaceFirst("p[0-9]+$", "p0");
 				Matcher matcher = standardAvPattern.matcher(avRecord);
 				if (matcher.find()) {
 					if(definitionStrictMode) {
