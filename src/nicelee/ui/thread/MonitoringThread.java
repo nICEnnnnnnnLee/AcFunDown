@@ -50,8 +50,11 @@ public class MonitoringThread extends Thread {
 					case FAIL:
 						pauseTask ++;
 						dp.getLbDownFile().setText(genSizeCntStr("文件%d进度： %s/%s", downloader));
-						if(dp.getFailCnt() == MAX_FAIL_CNT) {
-							dp.getLbCurrentStatus().setText(genTips("%d/%d 下载异常. ", downloader));
+						if(dp.getFailCnt() == MAX_FAIL_CNT || downloader.errorInfo() != null) {
+							if(downloader.errorInfo() != null)
+								dp.getLbCurrentStatus().setText(downloader.errorInfo());
+							else
+								dp.getLbCurrentStatus().setText(genTips("%d/%d 下载异常. ", downloader));
 							dp.getBtnControl().setText("继续下载");
 							dp.getBtnControl().setVisible(true);
 						}else {
@@ -100,7 +103,8 @@ public class MonitoringThread extends Thread {
 								speedKBPerSec);
 						
 						dp.getLbCurrentStatus().setText(txt);
-						dp.getLbDownFile().setText(genSizeCntStr("文件%d进度： %s/%s", downloader));
+						if(downloader.currentFileDownloadedSize() != 0)
+							dp.getLbDownFile().setText(genSizeCntStr("文件%d进度： %s/%s", downloader));
 						dp.getBtnControl().setText("暂停");
 						dp.getBtnControl().setVisible(true);
 						dp.setBackground(null);

@@ -24,7 +24,7 @@ public class FLVDownloader implements IDownloader {
 	protected int totalTaskCnt = 1;
 	protected StatusEnum convertingStatus = StatusEnum.NONE;
 	protected long sumSuccessDownloaded = 0;
-
+	protected String errorInfo;
 	@Override
 	public boolean matches(String url) {
 		if(url.contains(".flv")) {
@@ -53,6 +53,7 @@ public class FLVDownloader implements IDownloader {
 	
 	protected boolean download(String url, String avId, int qn, int page, String suffix) {
 		convertingStatus = StatusEnum.NONE;
+		errorInfo = null;
 		currentTask = 1;
 		String fName = avId + "-" + qn + "-p" + page;
 		HttpHeaders header = new HttpHeaders();
@@ -86,6 +87,7 @@ public class FLVDownloader implements IDownloader {
 			if (result) {
 				convertingStatus = StatusEnum.SUCCESS;
 			} else {
+				errorInfo = "FLV文件合并失败";
 				convertingStatus = StatusEnum.FAIL;
 			}
 			return result;
@@ -195,6 +197,11 @@ public class FLVDownloader implements IDownloader {
 	@Override
 	public File file() {
 		return file;
+	}
+
+	@Override
+	public String errorInfo() {
+		return errorInfo;
 	}
 
 }

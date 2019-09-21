@@ -35,6 +35,7 @@ public class M4SDownloader extends FLVDownloader{
 	@Override
 	public boolean download(String url, String avId, int qn, int page) {
 		convertingStatus = StatusEnum.NONE;
+		errorInfo = null;
 		HttpHeaders header = new HttpHeaders();
 		String links[] = url.split("#");
 		String fName = avId + "-" + qn + "-p" + page;
@@ -64,6 +65,7 @@ public class M4SDownloader extends FLVDownloader{
 				if (result) {
 					convertingStatus = StatusEnum.SUCCESS;
 				} else {
+					errorInfo = "M4S文件转码失败";
 					convertingStatus = StatusEnum.FAIL;
 				}
 				return result;

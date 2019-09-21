@@ -138,4 +138,12 @@ public class Downloader implements IDownloader {
 		return 0;
 	}
 
+	@Override
+	public String errorInfo() {
+		if (downloader != null) {
+			return downloader.errorInfo();
+		}
+		return null;
+	}
+
 }

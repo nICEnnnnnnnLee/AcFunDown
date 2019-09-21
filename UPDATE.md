@@ -1,4 +1,6 @@
 ## UPDATE  
+* v0.4 
+    * 优化下载后TS合成失败提示
 * v0.3 
     * 新增`https://www.acfun.cn/bangumi/ab5024869`最新番剧解析  
     * 修复半自动更新的若干bug  

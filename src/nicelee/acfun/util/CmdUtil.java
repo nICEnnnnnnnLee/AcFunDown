@@ -120,7 +120,10 @@ public class CmdUtil {
 		File videoFile = new File(Global.savePath + dstName + ".mp4");
 		if (!videoFile.exists()) {
 			Logger.println("下载完毕, 正在运行转码程序...");
-			run(cmd);
+			if(!run(cmd)) {
+				Logger.println("M3U8转码异常");
+				return false;
+			}
 			Logger.println("转码完毕");
 			// 删除文件
 			if (videoFile.exists()) {

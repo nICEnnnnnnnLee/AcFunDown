@@ -131,4 +131,9 @@ public interface IDownloader {
 		return size + " Byte";
 	}
 
+	/**
+	 * 获取异常信息，如果没有则为null
+	 * @return
+	 */
+	public String errorInfo();
 }

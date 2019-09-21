@@ -37,6 +37,7 @@ public class M3u8Downloader extends FLVDownloader {
 		// 前期准备
 		String suffix = ".ts";
 		convertingStatus = StatusEnum.NONE;
+		errorInfo = null;
 		currentTask = 1;
 		String fName = avId + "-" + qn + "-p" + page;
 		HttpHeaders header = new HttpHeaders();
@@ -85,6 +86,8 @@ public class M3u8Downloader extends FLVDownloader {
 		if (result) {
 			convertingStatus = StatusEnum.SUCCESS;
 		} else {
+			errorInfo = "ts文件合并失败";
+			System.out.println(errorInfo);
 			convertingStatus = StatusEnum.FAIL;
 		}
 		return result;
