@@ -22,8 +22,6 @@ public class ABParser_latest extends AbstractBaseParser {
 	private final static Pattern pattern = Pattern.compile("ab[0-9]+[^_]*");
 	private String albumId;
 
-	// public EPParser(HttpRequestUtil util,IParamSetter paramSetter, int pageSize)
-	// {
 	public ABParser_latest(Object... obj) {
 		super(obj);
 	}
@@ -57,7 +55,7 @@ public class ABParser_latest extends AbstractBaseParser {
 	protected VideoInfo getAVDetail(String albumId, boolean getVideoLink) {
 		// 查询信息，得到groupId，构造 albumId_groupId_id
 		HttpHeaders headers = new HttpHeaders();
-		String infoUrl = "https://www.acfun.cn/album/abm/bangumis/video?albumId=" + albumId.replace("ab", "");
+		String infoUrl = "https://www.acfun.cn/album/abm/bangumis/video?num=1&size=1000&albumId=" + albumId.replace("ab", "");
 		String strJson = util.getContent(infoUrl, headers.getCommonHeaders("www.acfun.cn"),
 						HttpCookies.getGlobalCookies());
 		JSONObject info = new JSONObject(strJson).getJSONObject("data");
