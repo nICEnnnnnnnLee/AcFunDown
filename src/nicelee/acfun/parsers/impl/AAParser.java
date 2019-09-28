@@ -65,10 +65,6 @@ public class AAParser extends ABParser {
 				HttpCookies.getGlobalCookies());
 		JSONObject info = new JSONObject(strJson).getJSONObject("data");
 		JSONArray clips = info.getJSONArray("content");
-//		JSONObject clipJson = clips.getJSONObject(clips.length() - 1).getJSONArray("videos").getJSONObject(0);
-//
-//		final String albumId_groupId_id = String.format("%s_%d_%d", aaId, clipJson.getLong("groupId"),
-//				clipJson.getLong("id"));
 
 		VideoInfo viInfo = new VideoInfo();
 		viInfo.setVideoId(aaId);
@@ -95,7 +91,8 @@ public class AAParser extends ABParser {
 		LinkedHashMap<Long, ClipInfo> clipMap = new LinkedHashMap<Long, ClipInfo>();
 		for (int i = 0; i < clips.length(); i++) {
 			JSONObject clipObj = clips.getJSONObject(i).getJSONArray("videos").getJSONObject(0);
-			final String albumId_groupId_id = String.format("%s_%d_%d", aaId, clipObj.getLong("groupId"),
+//			final String albumId_groupId_id = String.format("%s_%d_%d", aaId, clipObj.getLong("groupId"),
+			final String albumId_groupId_id = String.format("%s_%d_%d", aaId, 36188,
 					clipObj.getLong("id"));
 			ClipInfo clip = new ClipInfo();
 			clip.setAvTitle(viInfo.getVideoName());
