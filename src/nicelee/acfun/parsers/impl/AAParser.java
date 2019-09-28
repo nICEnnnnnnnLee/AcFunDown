@@ -1,6 +1,7 @@
 package nicelee.acfun.parsers.impl;
 
 import java.util.LinkedHashMap;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.json.JSONArray;
@@ -11,13 +12,12 @@ import nicelee.acfun.model.ClipInfo;
 import nicelee.acfun.model.VideoInfo;
 import nicelee.acfun.util.HttpCookies;
 import nicelee.acfun.util.HttpHeaders;
-import nicelee.acfun.util.Logger;
 
 @Acfun(name = "aaParser", note = "番剧")
 public class AAParser extends ABParser {
 //https://www.acfun.cn/album/abm/bangumis/video?albumId=5024869&groupId=34168&num=1&size=20&_=1565001964314
 //https://www.acfun.cn/album/abm/bangumis/video?albumId=5024869&groupId=34168&num=1&size=1000&_=1565008921550
-	private final static Pattern pattern = Pattern.compile("aa[0-9]+");
+	private final static Pattern pattern = Pattern.compile("(?!aa[0-9]+_[0-9]+_[0-9]+)aa[0-9]+");
 	private String aaId;
 
 	public AAParser(Object... obj) {
@@ -53,42 +53,50 @@ public class AAParser extends ABParser {
 	 * @param isGetLink
 	 * @return
 	 */
+	private final static Pattern pABVideoInfo = Pattern.compile("window.bangumiData ?= ?(.*?});");
+
 	protected VideoInfo getAADetail(String aaId, int videoFormat, boolean isGetLink) {
+		
+		// 查询信息，得到groupId，构造 albumId_groupId_id
+		HttpHeaders headers = new HttpHeaders();
+		String infoUrl = "https://www.acfun.cn/album/abm/bangumis/video?num=1&size=1000&albumId="
+				+ aaId.replace("aa", "");
+		String strJson = util.getContent(infoUrl, headers.getCommonHeaders("www.acfun.cn"),
+				HttpCookies.getGlobalCookies());
+		JSONObject info = new JSONObject(strJson).getJSONObject("data");
+		JSONArray clips = info.getJSONArray("content");
+//		JSONObject clipJson = clips.getJSONObject(clips.length() - 1).getJSONArray("videos").getJSONObject(0);
+//
+//		final String albumId_groupId_id = String.format("%s_%d_%d", aaId, clipJson.getLong("groupId"),
+//				clipJson.getLong("id"));
+
 		VideoInfo viInfo = new VideoInfo();
 		viInfo.setVideoId(aaId);
 
 		// 获取json
-		HttpHeaders headers = new HttpHeaders();
 		String basicInfoUrl = String.format("https://www.acfun.cn/bangumi/%s", aaId);
-		String html = util.getContent(basicInfoUrl, headers.getCommonHeaders("www.acfun.cn"), HttpCookies.getGlobalCookies());
+		String html = util.getContent(basicInfoUrl, headers.getCommonHeaders("www.acfun.cn"),
+				HttpCookies.getGlobalCookies());
 
-		int begin = html.indexOf("<script>var albumInfo =");
-		int end = html.indexOf("</script>", begin);
-		String json = html.substring(begin + 24, end);
-		Logger.println(json);
+		Matcher matcher = pABVideoInfo.matcher(html);
+		matcher.find();
+		String json = matcher.group(1);
+		System.out.println(json);
 
 		// 获取ab总体信息
 		JSONObject jObj = new JSONObject(json);
-		viInfo.setVideoName(jObj.getString("title"));
-		viInfo.setBrief(jObj.getString("intro"));
+		viInfo.setVideoName(jObj.getString("bangumiTitle"));
+		viInfo.setBrief(jObj.getString("bangumiIntro"));
 		viInfo.setAuthor("番剧");
 		viInfo.setAuthorId("番剧");
-		viInfo.setVideoPreview(jObj.getString("coverImageH"));
-
-		final long groupId = jObj.getJSONArray("groups").getJSONObject(0).getLong("id");
+		viInfo.setVideoPreview(jObj.getString("bangumiCoverImageH"));
 
 		// 获取各P信息
-		String detailInfoUrl = String.format(
-				"https://www.acfun.cn/album/abm/bangumis/video?albumId=%s&groupId=%d&num=1&size=1000&_=%d",
-				aaId.replace("aa", ""), groupId, System.currentTimeMillis());
-		String jsonClips = util.getContent(detailInfoUrl, headers.getCommonHeaders("www.acfun.cn"), HttpCookies.getGlobalCookies());
-		
-		JSONArray array = new JSONObject(jsonClips).getJSONObject("data").getJSONArray("content");
 		LinkedHashMap<Long, ClipInfo> clipMap = new LinkedHashMap<Long, ClipInfo>();
-		for (int i = 0; i < array.length(); i++) {
-			JSONObject clipObj = array.getJSONObject(i).getJSONArray("videos").getJSONObject(0);
-			final String albumId_groupId_id = String.format("ab%s_%d_%d", 
-					aaId.replace("aa", ""), groupId, clipObj.getLong("id"));
+		for (int i = 0; i < clips.length(); i++) {
+			JSONObject clipObj = clips.getJSONObject(i).getJSONArray("videos").getJSONObject(0);
+			final String albumId_groupId_id = String.format("%s_%d_%d", aaId, clipObj.getLong("groupId"),
+					clipObj.getLong("id"));
 			ClipInfo clip = new ClipInfo();
 			clip.setAvTitle(viInfo.getVideoName());
 			clip.setAvId(albumId_groupId_id);

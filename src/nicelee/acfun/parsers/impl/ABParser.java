@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import nicelee.acfun.annotations.Acfun;
@@ -16,6 +15,7 @@ import nicelee.acfun.util.HttpCookies;
 import nicelee.acfun.util.HttpHeaders;
 import nicelee.acfun.util.Logger;
 
+//depreciated
 @Acfun(name = "abParser", note = "番剧单集")
 public class ABParser extends AbstractBaseParser {
 
@@ -33,7 +33,7 @@ public class ABParser extends AbstractBaseParser {
 		matcher = pattern.matcher(input);
 		boolean matches = matcher.find();
 		if (matches) {
-			albumId_groupId_id = matcher.group();
+			albumId_groupId_id = matcher.group().replace("ab", "aa");
 		}
 		return matches;
 	}

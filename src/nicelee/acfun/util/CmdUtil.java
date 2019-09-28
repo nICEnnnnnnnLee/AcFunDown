@@ -230,11 +230,11 @@ public class CmdUtil {
 	 * 
 	 * @return
 	 */
-	final static Pattern cmdFolderPattern = Pattern.compile("^a[vbc][0-9_]+-[0-9]+-p[0-9]+$");
-	final static Pattern cmdTxtPattern = Pattern.compile("^(a[vbc][0-9_]+-[0-9]+-p[0-9]+\\.(flv|mp4))\\.txt$");
-	final static Pattern cmdDonePartPattern = Pattern.compile("^a[vbc][0-9_]+-[0-9]+-p[0-9]+-part[0-9]+\\.(flv|mp4)$");
+	final static Pattern cmdFolderPattern = Pattern.compile("^a[vabc][0-9_]+-[0-9]+-p[0-9]+$");
+	final static Pattern cmdTxtPattern = Pattern.compile("^(a[vabc][0-9_]+-[0-9]+-p[0-9]+\\.(flv|mp4))\\.txt$");
+	final static Pattern cmdDonePartPattern = Pattern.compile("^a[vabc][0-9_]+-[0-9]+-p[0-9]+-part[0-9]+\\.(flv|mp4)$");
 	final static Pattern cmdPartPattern = Pattern.compile("^(.*)\\.part$");
-	final static Pattern standardFileNamePattern = Pattern.compile("^a[vbc][0-9_]+-[0-9]+-p[0-9]+\\.(flv|mp4)$");
+	final static Pattern standardFileNamePattern = Pattern.compile("^a[vabc][0-9_]+-[0-9]+-p[0-9]+\\.(flv|mp4)$");
 
 	public static void deleteAllInactiveCmdTemp() {
 		// 找到下载文件夹

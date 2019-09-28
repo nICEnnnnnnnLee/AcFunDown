@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import nicelee.acfun.annotations.Acfun;
+//import nicelee.acfun.annotations.Acfun;
 import nicelee.acfun.downloaders.impl.M3u8Downloader;
 import nicelee.acfun.model.ClipInfo;
 import nicelee.acfun.model.VideoInfo;
@@ -16,7 +16,8 @@ import nicelee.acfun.util.HttpCookies;
 import nicelee.acfun.util.HttpHeaders;
 import nicelee.acfun.util.Logger;
 
-@Acfun(name = "abParser", note = "番剧单集")
+//depreciated
+//@Acfun(name = "abParser", note = "番剧单集")
 public class ABParser_latest extends AbstractBaseParser {
 
 	private final static Pattern pattern = Pattern.compile("ab[0-9]+[^_]*");

@@ -29,7 +29,7 @@ public class RepoUtil {
 		definitionStrictMode = Global.repoInDefinitionStrictMode;
 		if(fRepo == null || refresh) {
 			fRepo = new File("config/repo.config");
-			standardAvPattern = Pattern.compile("^(a[vbc][0-9_]+)-([0-9]+)(-p[0-9]+)$");
+			standardAvPattern = Pattern.compile("^(a[vabc][0-9_]+)-([0-9]+)(-p[0-9]+)$");
 			downRepo = new CopyOnWriteArraySet<String>();
 			if(!fRepo.exists()) {
 				try {
@@ -45,8 +45,11 @@ public class RepoUtil {
 			buReader = new BufferedReader(new FileReader(fRepo));
 			String avRecord;
 			while ((avRecord = buReader.readLine()) != null) {
+				// 处理历史遗留事项，保持版本兼容
 				if(avRecord.contains("_"))
 					avRecord = avRecord.replaceFirst("p[0-9]+$", "p0");
+				if(avRecord.contains("ab"))
+					avRecord = avRecord.replaceFirst("ab", "aa");
 				Matcher matcher = standardAvPattern.matcher(avRecord);
 				if (matcher.find()) {
 					if(definitionStrictMode) {

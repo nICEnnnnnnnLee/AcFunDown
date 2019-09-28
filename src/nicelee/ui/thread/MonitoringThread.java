@@ -34,7 +34,7 @@ public class MonitoringThread extends Thread {
 					String folder = downloader.file().getParentFile().getParent();
 					String fName = downloader.file().getName();
 					if(Global.doRenameAfterComplete && downloader.currentStatus() == StatusEnum.SUCCESS) {
-						fName = fName.replaceFirst("a[vbc][0-9_]+-[0-9]+-p[0-9]+", dp.formattedTitle);
+						fName = fName.replaceFirst("a[vabc][0-9_]+-[0-9]+-p[0-9]+", dp.formattedTitle);
 					}
 					String path = new File(folder, fName).getAbsolutePath();
 					dp.getLbFileName().setText(path);
