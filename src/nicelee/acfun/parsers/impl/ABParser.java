@@ -120,9 +120,10 @@ public class ABParser extends AbstractBaseParser {
 	 * 查询视频链接(查询两次)
 	 * 
 	 * @external output linkQN 保存返回链接的清晰度
-	 * @param avId 视频的avid
-	 * @param cid  av下面可能不只有一个视频, avId + cid才能确定一个真正的视频
+	 * @param albumId_groupId_id aaxxx_xxx_xxx
+	 * @param videoId  
 	 * @param qn
+	 * @param downFormat
 	 * @return 链接
 	 */
 	@Override
@@ -130,13 +131,17 @@ public class ABParser extends AbstractBaseParser {
 		HttpHeaders headers = new HttpHeaders();
 
 		// 获取总的m3u8
-		String basicInfoUrl = String.format("https://www.acfun.cn/rest/pc-direct/play/playInfo/m3u8Auto?videoId=%s",
-				videoId);
-		String json = util.getContent(basicInfoUrl, headers.getCommonHeaders("www.acfun.cn"),
+		String basicInfoUrl = String.format("https://www.acfun.cn/bangumi/%s",
+				albumId_groupId_id);
+		String html = util.getContent(basicInfoUrl, headers.getCommonHeaders("www.acfun.cn"),
 				HttpCookies.getGlobalCookies()); // 查询1次
-
-		JSONObject jObj = new JSONObject(json).getJSONObject("playInfo");
-		String totalLink = jObj.getJSONArray("streams").getJSONObject(0).getJSONArray("playUrls").getString(0);
+		Matcher matcher = pABVideoInfo.matcher(html);
+		matcher.find();
+		String json = matcher.group(1);
+		Logger.println(json);
+		// window.bangumiData.currentVideoInfo.playInfos[0].playUrls[0]
+		JSONObject jObj = new JSONObject(json).getJSONObject("currentVideoInfo").getJSONArray("playInfos").getJSONObject(0);
+		String totalLink = jObj.getJSONArray("playUrls").getString(0);
 
 		// 由总m3u8获取对应清晰度的链接
 		LinkedList<String> links = new LinkedList<String>();
