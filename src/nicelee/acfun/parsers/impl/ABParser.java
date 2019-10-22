@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import nicelee.acfun.annotations.Acfun;
@@ -117,7 +118,7 @@ public class ABParser extends AbstractBaseParser {
 	}
 
 	/**
-	 * 查询视频链接(查询两次)
+	 * 查询视频链接(查询1次)
 	 * 
 	 * @external output linkQN 保存返回链接的清晰度
 	 * @param albumId_groupId_id aaxxx_xxx_xxx
@@ -126,6 +127,7 @@ public class ABParser extends AbstractBaseParser {
 	 * @param downFormat
 	 * @return 链接
 	 */
+	final static int[] HEIGHTS = {360, 540, 720, 1080};
 	@Override
 	public String getVideoLink(String albumId_groupId_id, String videoId, int qn, int downFormat) {
 		HttpHeaders headers = new HttpHeaders();
@@ -139,34 +141,46 @@ public class ABParser extends AbstractBaseParser {
 		matcher.find();
 		String json = matcher.group(1);
 		Logger.println(json);
-		// window.bangumiData.currentVideoInfo.playInfos[0].playUrls[0]
-		JSONObject jObj = new JSONObject(json).getJSONObject("currentVideoInfo").getJSONArray("playInfos").getJSONObject(0);
-		String totalLink = jObj.getJSONArray("playUrls").getString(0);
-
-		// 由总m3u8获取对应清晰度的链接
-		LinkedList<String> links = new LinkedList<String>();
-		String m3u8Content = util.getContent(totalLink, headers.getEmptyHeaders()); // 查询1次
-		Logger.println(m3u8Content);
-		String[] lines = m3u8Content.split("\r?\n");
-
-		String result = null;
-		int count = 0;
-		for (String line : lines) {
-			if (!line.startsWith("#") && !line.isEmpty()) {
-				// 如果是相对路径，补全
-				if (!line.startsWith("http")) {
-					line = M3u8Downloader.genABUrl(line, totalLink);
-					links.add(line);
-					result = line;
-					if (count == qn) {
-						break;
-					}
-					count++;
+		// window.pageInfo.currentVideoInfo.ksPlayJson
+		json = new JSONObject(json).getJSONObject("currentVideoInfo").getString("ksPlayJson");
+		// .adaptationSet.representation[]
+		JSONArray array = new JSONObject(json).getJSONObject("adaptationSet").getJSONArray("representation");
+		// 640x360 960x540 1280x720 1920x1080
+		// 根据height来选取清晰度
+		int height = HEIGHTS[qn];
+		int realBandwidths[] = new int[array.length()];
+		for(int i=0; i<array.length(); i++) {
+			JSONObject obj = array.getJSONObject(i);
+			if(height == obj.getInt("height")) {
+				paramSetter.setRealQN(qn);
+				return obj.getJSONArray("backupUrl").getString(0);
+			}
+			realBandwidths[i] = obj.getInt("bandwidth");
+		}
+		// 如果height确定清晰度失败，那么使用bandwidth
+		// bandwidth 冒泡排序，确保从小到大
+		for(int i=0; i<realBandwidths.length; i++) {
+			for(int j=0; j<realBandwidths.length - i -1; j++) {
+				if(realBandwidths[j] > realBandwidths[j+1]) {
+					int temp = realBandwidths[j];
+					realBandwidths[j] = realBandwidths[j+1];
+					realBandwidths[j+1] = temp;
 				}
 			}
 		}
-		paramSetter.setRealQN(count);
-		return result;
+		// 确保qn值合法
+		if(qn > realBandwidths.length -1) {
+			qn = realBandwidths.length -1;
+		}
+		int bandwidth = realBandwidths[qn];
+		for(int i=0; i<array.length(); i++) {
+			JSONObject obj = array.getJSONObject(i);
+			if(bandwidth == obj.getInt("bandwidth")) {
+				paramSetter.setRealQN(qn);
+				return obj.getJSONArray("backupUrl").getString(0);
+			}
+		}
+		return null;
 	}
 
 }

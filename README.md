@@ -20,6 +20,10 @@ AcFun 视频下载器，用于下载A站视频。
 + 支持UP主视频下载!!!  
 + 支持断点续传下载!!!!!(因异常原因退出后, 只要下载目录不变, 直接在上次基础上继续下载)
 
+## :smile:免责声明    
+本项目为基于浏览器行为的个性化定制工具，其功能是**为A站用户提供其可接触权限内的内容的离线保存**，涉及到的多媒体内容版权归其所有者所有。  
+用户对多媒体资源的剪辑、再发布等任何行为，均应确保获得所有者授权。  
+作者对使用此工具或基于此工具的二次开发所产生的任何行为概不负责。  
 
 ## :smile:第三方库使用声明  
 * 使用[JSON.org](https://github.com/stleary/JSON-java)库做简单的Json解析[![](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/stleary/JSON-java/blob/master/LICENSE)
