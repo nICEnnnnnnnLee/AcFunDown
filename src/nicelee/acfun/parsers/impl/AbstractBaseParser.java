@@ -46,7 +46,7 @@ public abstract class AbstractBaseParser implements IInputParser {
 	 * @return
 	 */
 	private final static Pattern pVideoInfo = Pattern
-			.compile("window\\.videoInfo ?= ?(.*);[ \n]+window\\.addEventListener");
+			.compile("window\\.videoInfo ?= ?(.*?});");
 
 	protected VideoInfo getAVDetail(String avId, int videoFormat, boolean getVideoLink) {
 		VideoInfo viInfo = new VideoInfo();

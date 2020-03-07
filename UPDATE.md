@@ -1,4 +1,6 @@
 ## UPDATE  
+* v0.8 
+    * fix [issue #7](https://github.com/nICEnnnnnnnLee/AcFunDown/issues/7)重写获取信息的正则表达式
 * v0.7 
     * fix [issue #6](https://github.com/nICEnnnnnnnLee/AcFunDown/issues/6)修复AcFun番剧清晰度错误的问题
 * v0.6 
