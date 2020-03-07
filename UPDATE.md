@@ -1,4 +1,6 @@
 ## UPDATE  
+* v0.9 
+    * fix [issue #8](https://github.com/nICEnnnnnnnLee/AcFunDown/issues/8)重写清晰度获取逻辑
 * v0.8 
     * fix [issue #7](https://github.com/nICEnnnnnnnLee/AcFunDown/issues/7)重写获取信息的正则表达式
 * v0.7 

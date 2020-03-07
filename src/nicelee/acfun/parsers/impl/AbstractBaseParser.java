@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import nicelee.acfun.enums.VideoQualityEnum;
 import nicelee.acfun.model.ClipInfo;
 import nicelee.acfun.model.VideoInfo;
 import nicelee.acfun.parsers.IInputParser;
@@ -45,8 +46,7 @@ public abstract class AbstractBaseParser implements IInputParser {
 	 * @param getVideoLink
 	 * @return
 	 */
-	private final static Pattern pVideoInfo = Pattern
-			.compile("window\\.videoInfo ?= ?(.*?});");
+	private final static Pattern pVideoInfo = Pattern.compile("window\\.videoInfo ?= ?(.*?});");
 
 	protected VideoInfo getAVDetail(String avId, int videoFormat, boolean getVideoLink) {
 		VideoInfo viInfo = new VideoInfo();
@@ -55,12 +55,13 @@ public abstract class AbstractBaseParser implements IInputParser {
 		// 获取json
 		HttpHeaders headers = new HttpHeaders();
 		String basicInfoUrl = String.format("https://www.acfun.cn/v/%s", avId);
-		String html = util.getContent(basicInfoUrl, headers.getCommonHeaders("www.acfun.cn"), HttpCookies.getGlobalCookies());// 请求1次
+		String html = util.getContent(basicInfoUrl, headers.getCommonHeaders("www.acfun.cn"),
+				HttpCookies.getGlobalCookies());// 请求1次
 
 		Matcher matcher = pVideoInfo.matcher(html);
 		matcher.find();
 		String json = matcher.group(1);
-		//System.out.println(json);
+		// System.out.println(json);
 
 		// 获取ac总体信息
 		JSONObject jObj = new JSONObject(json);
@@ -87,13 +88,14 @@ public abstract class AbstractBaseParser implements IInputParser {
 
 			LinkedHashMap<Integer, String> links = new LinkedHashMap<Integer, String>();
 			try {
-				if(qnList == null) {
+				if (qnList == null) {
 					qnList = getVideoQNList(avId, String.valueOf(clip.getcId())); // 请求1次
 				}
 				for (int qn : qnList) {
 					if (getVideoLink) {
-						//String link = getVideoLink(avId, String.valueOf(clip.getcId()), qn, videoFormat);
-						String href = String.format("/v/%s_%d", avId, clip.getPage() +1);
+						// String link = getVideoLink(avId, String.valueOf(clip.getcId()), qn,
+						// videoFormat);
+						String href = String.format("/v/%s_%d", avId, clip.getPage() + 1);
 						String link = getVideoLinkByHref(headers, href, qn); // 请求1次
 						links.put(qn, link);
 					} else {
@@ -115,6 +117,7 @@ public abstract class AbstractBaseParser implements IInputParser {
 
 	/**
 	 * 0:标清 1:高清 2:超清 3:1080p
+	 * 
 	 * @external input HttpRequestUtil util
 	 * @param avId
 	 * @param cid
@@ -135,10 +138,10 @@ public abstract class AbstractBaseParser implements IInputParser {
 		JSONObject jObj = new JSONObject(
 				new JSONObject(json).getJSONObject("currentVideoInfo").getString("ksPlayJson"));
 		JSONArray jArr = jObj.getJSONObject("adaptationSet").getJSONArray("representation");
-		
+
 		int qnList[] = new int[jArr.length()];
 		Logger.println(qnList.length);
-		for(int i=0; i<qnList.length; i++) {
+		for (int i = 0; i < qnList.length; i++) {
 //			qnList[i] = jArr.getJSONObject(i).getInt("bandwidth");
 			qnList[i] = i;
 		}
@@ -160,8 +163,8 @@ public abstract class AbstractBaseParser implements IInputParser {
 	public String getVideoLink(String avId, String cid, int qn, int downFormat) {
 		// 获取cid 对应的链接href
 		HttpHeaders headers = new HttpHeaders();
-		String href = getHrefByIds(avId, cid, headers); //(查询一次)
-		return getVideoLinkByHref(headers, href, qn);//(查询一次)
+		String href = getHrefByIds(avId, cid, headers); // (查询一次)
+		return getVideoLinkByHref(headers, href, qn);// (查询一次)
 	}
 
 	/**
@@ -179,13 +182,24 @@ public abstract class AbstractBaseParser implements IInputParser {
 		Matcher matcher = pVideoInfo.matcher(newhtml);
 		matcher.find();
 		String json = matcher.group(1);
-		// Logger.println(json);
 		JSONObject jObj = new JSONObject(
 				new JSONObject(json).getJSONObject("currentVideoInfo").getString("ksPlayJson"));
 		JSONArray jArr = jObj.getJSONObject("adaptationSet").getJSONArray("representation");
-		int realQn = jArr.length() - 1;
-		if(qn <= realQn) {
-			realQn = qn;
+		Integer realQn = null;
+		for (int i = 0; i < jArr.length(); i++) {
+			if (VideoQualityEnum.getQualityDescript(qn).equals(jArr.getJSONObject(i).getString("qualityLabel"))) {
+				Logger.println("找到相应清晰度:" + VideoQualityEnum.getQualityDescript(qn));
+				realQn = i;
+				break;
+			}
+		}
+
+		if(realQn == null) {
+			Logger.println("没有找到相应清晰度");
+			realQn = jArr.length() - 1;
+			if (qn <= realQn) {
+				realQn = qn;
+			}
 		}
 		Logger.println(jArr.getJSONObject(realQn).getString("url"));
 		paramSetter.setRealQN(realQn);
@@ -202,7 +216,8 @@ public abstract class AbstractBaseParser implements IInputParser {
 	 */
 	private String getHrefByIds(String avId, String cid, HttpHeaders headers) {
 		String basicInfoUrl = String.format("https://www.acfun.cn/v/%s", avId);
-		String html = util.getContent(basicInfoUrl, headers.getCommonHeaders("www.acfun.cn"), HttpCookies.getGlobalCookies());
+		String html = util.getContent(basicInfoUrl, headers.getCommonHeaders("www.acfun.cn"),
+				HttpCookies.getGlobalCookies());
 		try {
 			// data-href='/v/ac10187818_5' title="05" data-id='10205818'
 			String patt = String.format("data-href='([^>]*?)' title=\"[^>]*?\" data-id='%s'", cid);
@@ -213,7 +228,7 @@ public abstract class AbstractBaseParser implements IInputParser {
 			String href = matcher.group(1);
 			// System.out.println(href);
 			return href;
-		}catch (Exception e) {
+		} catch (Exception e) {
 			Logger.println("该ac为单p视频");
 			return "/v/" + avId;
 		}
