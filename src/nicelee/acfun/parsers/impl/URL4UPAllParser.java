@@ -15,7 +15,7 @@ import nicelee.acfun.util.Logger;
 @Acfun(name = "URL4UPAllParser", ifLoad = "listAll", note = "个人上传的视频列表")
 public class URL4UPAllParser extends AbstractPageQueryParser<VideoInfo> {
 
-	private final static Pattern pattern = Pattern.compile("acfun\\.cn/u/([0-9]+)\\.aspx");
+	private final static Pattern pattern = Pattern.compile("acfun\\.cn/u/([0-9]+)");
 	private String spaceID;
 
 	public URL4UPAllParser(Object... obj) {
@@ -54,24 +54,27 @@ public class URL4UPAllParser extends AbstractPageQueryParser<VideoInfo> {
 	}
 
 	private final static Pattern acPattern = Pattern.compile("<a href=\"/v/(ac[0-9]+)\"");
+	private final static Pattern userImgPattern = Pattern.compile("\\.user-photo\\{[\r\n ]*background:url\\((.*?)\\)");
+	private final static Pattern userNamePattern = Pattern.compile("data-username=(.*?)>");
 	@Override
 	protected boolean query(int page, int min, int max, Object... obj) {
 		int videoFormat = (int) obj[0];
 		boolean getVideoLink = (boolean) obj[1];
 		try {
-			// UP主信息
-			String indexUrl = String.format("https://www.acfun.cn/u/%s.aspx", spaceID);
-			String indexHtml = util.getContent(indexUrl, new HttpHeaders().getCommonHeaders("www.acfun.cn"));
-			int begin = indexHtml.indexOf("<script>var UPUser = ");
-			int end = indexHtml.indexOf("var pageList =", begin);
-			String userJson = indexHtml.substring(begin + 21, end);
-			JSONObject jUser = new JSONObject(userJson);
-			
 			if (pageQueryResult.getVideoName() == null) {
+				// UP主信息
+				String indexUrl = String.format("https://www.acfun.cn/u/%s", spaceID);
+				String indexHtml = util.getContent(indexUrl, new HttpHeaders().getCommonHeaders("www.acfun.cn"));
+				Matcher m = userImgPattern.matcher(indexHtml);
+				m.find();
+				String userImg = m.group(1);
+				m = userNamePattern.matcher(indexHtml);
+				m.find();
+				String userName = m.group(1);
 				pageQueryResult.setVideoId(spaceID);
-				pageQueryResult.setAuthor(jUser.getString("username"));
+				pageQueryResult.setAuthor(userName);
 				pageQueryResult.setVideoName(pageQueryResult.getAuthor() + "的视频列表");
-				pageQueryResult.setVideoPreview(jUser.getString("userImg"));
+				pageQueryResult.setVideoPreview(userImg);
 				pageQueryResult.setAuthorId(spaceID);
 				pageQueryResult.setBrief("视频列表 - " + paramSetter.getPage());
 			}
