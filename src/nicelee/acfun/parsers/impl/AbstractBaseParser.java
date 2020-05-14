@@ -201,9 +201,10 @@ public abstract class AbstractBaseParser implements IInputParser {
 				realQn = qn;
 			}
 		}
-		Logger.println(jArr.getJSONObject(realQn).getString("url"));
-		paramSetter.setRealQN(realQn);
-		return jArr.getJSONObject(realQn).getString("url");
+		JSONObject qnobj = jArr.getJSONObject(realQn);
+		Logger.println(qnobj.getString("url"));
+		paramSetter.setRealQN(VideoQualityEnum.getQN(qnobj.getString("qualityLabel")));
+		return qnobj.getString("url");
 	}
 
 	/**

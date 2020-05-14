@@ -61,7 +61,7 @@ public class DownloadRunnable implements Runnable {
 		// 查询下载链接
 		INeedAV iNeedAV = new INeedAV();
 		String url = iNeedAV.getInputParser(avid).getVideoLink(avid, cid, qn, Global.downloadFormat); //该步含网络查询， 可能较为耗时
-		int realQN = iNeedAV.getInputParser(avid).getVideoLinkQN();
+		int realQN = iNeedAV.getInputParser(avid).getRealQN();
 		// 生成格式化名称
 		String formattedTitle = CmdUtil.genFormatedName(
 				avid, 
