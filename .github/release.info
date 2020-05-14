@@ -1,0 +1,7 @@
+* 修复遗留问题：文件名清晰度不匹配  
+* 修复 [issue #9](https://github.com/nICEnnnnnnnLee/AcFunDown/issues/9)修复UP主频道解析失败的问题  
+* 添加自动化部署workflow  
+* 添加打包脚本  
+* 如果没有ffmpeg环境，请将```ffmpeg```[下载](https://github.com/nICEnnnnnnnLee/AcFunDown/raw/master/release/ffmpeg.exe)后置于```ILikeAcFun.jar```同级目录下(全编译70M左右)  
+* 结构目录参考[此处](https://github.com/nICEnnnnnnnLee/AcFunDown/tree/master/release)
+* 附: [ffmpeg官网](http://www.ffmpeg.org/download.html)
