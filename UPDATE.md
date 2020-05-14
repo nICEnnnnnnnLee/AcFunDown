@@ -1,4 +1,9 @@
 ## UPDATE  
+* v1.0 
+    * 修复遗留问题：文件名清晰度不匹配  
+    * fix [issue #9](https://github.com/nICEnnnnnnnLee/AcFunDown/issues/9)修复UP主频道解析失败的问题  
+    * 添加自动化部署workflow  
+    * 添加打包脚本  
 * v0.9 
     * fix [issue #8](https://github.com/nICEnnnnnnnLee/AcFunDown/issues/8)重写清晰度获取逻辑
 * v0.8 
