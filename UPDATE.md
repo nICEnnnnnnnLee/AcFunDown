@@ -1,4 +1,7 @@
 ## UPDATE  
+* v1.1 
+    * 修复 [issue #12](https://github.com/nICEnnnnnnnLee/AcFunDown/issues/12)修复解析问题  
+    * 优化 [issue #11](https://github.com/nICEnnnnnnnLee/AcFunDown/issues/11)添加自定义背景图片功能,将想要的背景图放入config文件夹下即可`config/background.png|jpg`   
 * v1.0 
     * 修复遗留问题：文件名清晰度不匹配  
     * fix [issue #9](https://github.com/nICEnnnnnnnLee/AcFunDown/issues/9)修复UP主频道解析失败的问题  

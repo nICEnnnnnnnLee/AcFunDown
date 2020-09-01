@@ -30,9 +30,6 @@ AcFun 视频下载器，用于下载A站视频。
 * 使用[zxing](https://github.com/zxing/zxing)库生成链接二维码图片[![](https://img.shields.io/badge/license-Apache%202-green.svg)](https://raw.githubusercontent.com/zxing/zxing/master/LICENSE)  
 * 使用[ffmpeg](http://www.ffmpeg.org)进行转码(ts片段转换为mp4)[![](https://img.shields.io/badge/license-LGPL%20(%3E%3D%202.1)%2FGPL%20(%3E%3D%202)-green.svg)](http://www.ffmpeg.org/legal.html)  
 
-## :smile:媒体素材使用声明             
-* [主页背景图](https://github.com/nICEnnnnnnnLee/AcFunDown/blob/master/src/resources/background.jpg?raw=true)取自[画师桂七 - 【第三波ac娘壁纸温暖向】](http://mobile.app.acfun.cn/a/ac3369030)  
-
 ## :smile:Win32/Linux/Mac用户请看过来
 + 自带的```ffmpeg.exe```为WIN 64位，32位系统或其它平台请自行[官网](http://www.ffmpeg.org/download.html)下载，替换源程序；  
 + 对于非WIN用户，请直接使用命令行调用该程序  
