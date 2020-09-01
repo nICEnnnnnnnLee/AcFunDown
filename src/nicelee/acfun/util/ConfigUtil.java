@@ -1,6 +1,7 @@
 package nicelee.acfun.util;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,6 +10,8 @@ import java.util.concurrent.Executors;
 //import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.swing.ImageIcon;
 
 import nicelee.ui.Global;
 
@@ -83,6 +86,18 @@ public class ConfigUtil {
 		String version = System.getProperty("acfun.version");
 		if(version != null) {
 			Global.version = version;
+		}
+		
+		File backImgPNG = new File("config/background.png");
+		if(backImgPNG.exists()) {
+			Global.backgroundImg = new ImageIcon(backImgPNG.getPath());
+		}else {
+			File backImgJPG = new File("config/background.jpg");
+			if(backImgJPG.exists()) {
+				Global.backgroundImg = new ImageIcon(backImgJPG.getPath());
+			}else {
+				Global.backgroundImg = new ImageIcon(Global.class.getResource("/resources/background.png"));
+			}
 		}
 	}
 }

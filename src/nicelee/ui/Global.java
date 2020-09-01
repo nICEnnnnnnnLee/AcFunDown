@@ -4,16 +4,19 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.swing.ImageIcon;
+
 import nicelee.acfun.downloaders.IDownloader;
 import nicelee.ui.item.DownloadInfoPanel;
 
 public class Global {
 	// 界面显示相关
-	public static String version = "v1.0";
+	public static String version = "v1.1";
 	public static boolean themeDefault = true;
 	
 	public static boolean isAlertIfDownloded = true;
 	public static int maxAlertPrompt = 5;
+	public static ImageIcon backgroundImg;
 	// 下载相关
 	public final static int MP4 = 0;
 	public final static int FLV = 1;
