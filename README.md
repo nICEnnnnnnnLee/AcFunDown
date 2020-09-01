@@ -2,7 +2,7 @@
 ![语言java](https://img.shields.io/badge/Require-java-green.svg)
 ![支持系统 Win/Linux/Mac](https://img.shields.io/badge/Platform-%20win%20|%20linux%20|%20mac-lightgrey.svg)
 ![测试版本64位Win10系统, jre 1.8.0_101](https://img.shields.io/badge/TestPass-Win10%20x64__java__1.8.0__101-green.svg)
-![开源协议Apache2.0](https://img.shields.io/badge/license-apache--2.0-green.svg)  
+![开源协议GPL3.0](https://img.shields.io/badge/license-gpl--3.0-green.svg)  
 ![当前版本](https://img.shields.io/github/release/nICEnnnnnnnLee/AcFunDown.svg?style=flat-square)
 ![Release 下载总量](https://img.shields.io/github/downloads/nICEnnnnnnnLee/AcFunDown/total.svg?style=flat-square)
 
