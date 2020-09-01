@@ -135,15 +135,15 @@ public abstract class AbstractBaseParser implements IInputParser {
 		Matcher matcher = pVideoInfo.matcher(newhtml);
 		matcher.find();
 		String json = matcher.group(1);
+		Logger.println(new JSONObject(json).getJSONObject("currentVideoInfo").getString("ksPlayJson"));
 		JSONObject jObj = new JSONObject(
 				new JSONObject(json).getJSONObject("currentVideoInfo").getString("ksPlayJson"));
-		JSONArray jArr = jObj.getJSONObject("adaptationSet").getJSONArray("representation");
+		JSONArray jArr = jObj.getJSONArray("adaptationSet").getJSONObject(0).getJSONArray("representation");
 
 		int qnList[] = new int[jArr.length()];
 		Logger.println(qnList.length);
 		for (int i = 0; i < qnList.length; i++) {
-//			qnList[i] = jArr.getJSONObject(i).getInt("bandwidth");
-			qnList[i] = i;
+			qnList[i] = VideoQualityEnum.getQN(jArr.getJSONObject(i).getString("qualityLabel"));
 		}
 		return qnList;
 	}
@@ -184,7 +184,7 @@ public abstract class AbstractBaseParser implements IInputParser {
 		String json = matcher.group(1);
 		JSONObject jObj = new JSONObject(
 				new JSONObject(json).getJSONObject("currentVideoInfo").getString("ksPlayJson"));
-		JSONArray jArr = jObj.getJSONObject("adaptationSet").getJSONArray("representation");
+		JSONArray jArr = jObj.getJSONArray("adaptationSet").getJSONObject(0).getJSONArray("representation");
 		Integer realQn = null;
 		for (int i = 0; i < jArr.length(); i++) {
 			if (VideoQualityEnum.getQualityDescript(qn).equals(jArr.getJSONObject(i).getString("qualityLabel"))) {
@@ -196,7 +196,7 @@ public abstract class AbstractBaseParser implements IInputParser {
 
 		if(realQn == null) {
 			Logger.println("没有找到相应清晰度");
-			realQn = jArr.length() - 1;
+			realQn = 0;
 			if (qn <= realQn) {
 				realQn = qn;
 			}

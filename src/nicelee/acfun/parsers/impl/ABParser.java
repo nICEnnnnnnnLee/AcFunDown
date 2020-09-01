@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import nicelee.acfun.annotations.Acfun;
 import nicelee.acfun.downloaders.impl.M3u8Downloader;
+import nicelee.acfun.enums.VideoQualityEnum;
 import nicelee.acfun.model.ClipInfo;
 import nicelee.acfun.model.VideoInfo;
 import nicelee.acfun.util.HttpCookies;
@@ -96,7 +97,7 @@ public class ABParser extends AbstractBaseParser {
 
 		LinkedHashMap<Integer, String> links = new LinkedHashMap<Integer, String>();
 		try {
-			int qnList[] = new int[] { 0, 1, 2, 3 };
+			int qnList[] = new int[] { 4,3,2,1,0 };
 			for (int qn : qnList) {
 				if (getVideoLink) {
 					String link = getVideoLink(albumId_groupId_id, "" + clip.getcId(), qn, 0);
@@ -127,7 +128,6 @@ public class ABParser extends AbstractBaseParser {
 	 * @param downFormat
 	 * @return 链接
 	 */
-	final static int[] HEIGHTS = {360, 540, 720, 1080};
 	@Override
 	public String getVideoLink(String albumId_groupId_id, String videoId, int qn, int downFormat) {
 		HttpHeaders headers = new HttpHeaders();
@@ -140,47 +140,31 @@ public class ABParser extends AbstractBaseParser {
 		Matcher matcher = pABVideoInfo.matcher(html);
 		matcher.find();
 		String json = matcher.group(1);
-		Logger.println(json);
+		//Logger.println(json);
 		// window.pageInfo.currentVideoInfo.ksPlayJson
-		json = new JSONObject(json).getJSONObject("currentVideoInfo").getString("ksPlayJson");
-		// .adaptationSet.representation[]
-		JSONArray array = new JSONObject(json).getJSONObject("adaptationSet").getJSONArray("representation");
-		// 640x360 960x540 1280x720 1920x1080
-		// 根据height来选取清晰度
-		int height = HEIGHTS[qn];
-		int realBandwidths[] = new int[array.length()];
-		for(int i=0; i<array.length(); i++) {
-			JSONObject obj = array.getJSONObject(i);
-			if(height == obj.getInt("height")) {
-				paramSetter.setRealQN(qn);
-				return obj.getJSONArray("backupUrl").getString(0);
-			}
-			realBandwidths[i] = obj.getInt("bandwidth");
-		}
-		// 如果height确定清晰度失败，那么使用bandwidth
-		// bandwidth 冒泡排序，确保从小到大
-		for(int i=0; i<realBandwidths.length; i++) {
-			for(int j=0; j<realBandwidths.length - i -1; j++) {
-				if(realBandwidths[j] > realBandwidths[j+1]) {
-					int temp = realBandwidths[j];
-					realBandwidths[j] = realBandwidths[j+1];
-					realBandwidths[j+1] = temp;
-				}
+		JSONObject jObj = new JSONObject(
+				new JSONObject(json).getJSONObject("currentVideoInfo").getString("ksPlayJson"));
+		JSONArray jArr = jObj.getJSONArray("adaptationSet").getJSONObject(0).getJSONArray("representation");
+		Integer realQn = null;
+		for (int i = 0; i < jArr.length(); i++) {
+			if (VideoQualityEnum.getQualityDescript(qn).equals(jArr.getJSONObject(i).getString("qualityLabel"))) {
+				Logger.println("找到相应清晰度:" + VideoQualityEnum.getQualityDescript(qn));
+				realQn = i;
+				break;
 			}
 		}
-		// 确保qn值合法
-		if(qn > realBandwidths.length -1) {
-			qn = realBandwidths.length -1;
-		}
-		int bandwidth = realBandwidths[qn];
-		for(int i=0; i<array.length(); i++) {
-			JSONObject obj = array.getJSONObject(i);
-			if(bandwidth == obj.getInt("bandwidth")) {
-				paramSetter.setRealQN(qn);
-				return obj.getJSONArray("backupUrl").getString(0);
+
+		if(realQn == null) {
+			Logger.println("没有找到相应清晰度");
+			realQn = 0;
+			if (qn <= realQn) {
+				realQn = qn;
 			}
 		}
-		return null;
+		JSONObject qnobj = jArr.getJSONObject(realQn);
+		Logger.println(qnobj.getString("url"));
+		paramSetter.setRealQN(VideoQualityEnum.getQN(qnobj.getString("qualityLabel")));
+		return qnobj.getString("url");
 	}
 
 }

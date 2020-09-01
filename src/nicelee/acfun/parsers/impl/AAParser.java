@@ -106,7 +106,7 @@ public class AAParser extends ABParser {
 
 			LinkedHashMap<Integer, String> links = new LinkedHashMap<Integer, String>();
 			try {
-				int qnList[] = new int[] { 0, 1, 2, 3 };
+				int qnList[] = new int[] { 4,3,2,1,0 };
 				for (int qn : qnList) {
 					if (isGetLink) {
 						String link = getVideoLink(albumId_groupId_id, "" + clip.getcId(), qn, 0);
