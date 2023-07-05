@@ -80,14 +80,19 @@ public class URL4UPAllParser extends AbstractPageQueryParser<VideoInfo> {
 			}
 
 			// UP主视频列表
-			String urlFormat = "https://www.acfun.cn/space/next?uid=%s&type=video&orderBy=2&pageNo=%d";
-			String url = String.format(urlFormat, spaceID, page);
+			// String urlFormat = "https://www.acfun.cn/space/next?uid=%s&type=video&orderBy=2&pageNo=%d";
+			String urlFormat = "https://www.acfun.cn/u/%s?quickViewId=ac-space-video-list&reqID=1&ajaxpipe=1&type=video&order=newest&page=%d&pageSize=%d&t=%d";
+			String url = String.format(urlFormat, spaceID, page, API_PMAX, System.currentTimeMillis());
 			String json = util.getContent(url, new HttpHeaders().getCommonHeaders("www.acfun.cn"));
-			System.out.println(url);
-			System.out.println(json);
+			Logger.println(url);
+			Logger.println(json);
+			if(json.endsWith("*/")) {
+				int index = json.lastIndexOf("/*");
+				json = json.substring(0, index);
+			}
 			JSONObject jobj = new JSONObject(json);
 			
-			String results[] = jobj.getJSONObject("data").getString("html").split("播放中");
+			String results[] = jobj.getString("html").split("</figure>");
 			LinkedHashMap<Long, ClipInfo> map = pageQueryResult.getClips();
 			for (int i = min - 1; i < results.length && i < max; i++) {
 				Matcher matcher = acPattern.matcher(results[i]);
