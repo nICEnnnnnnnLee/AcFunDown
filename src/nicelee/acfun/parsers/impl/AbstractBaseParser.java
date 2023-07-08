@@ -130,7 +130,7 @@ public abstract class AbstractBaseParser implements IInputParser {
 
 		// 获取Array
 		String newhtml = util.getContent(String.format("https://www.acfun.cn%s", href),
-				headers.getCommonHeaders("www.acfun.cn"), null);
+				headers.getCommonHeaders("www.acfun.cn"), HttpCookies.getGlobalCookies());
 
 		Matcher matcher = pVideoInfo.matcher(newhtml);
 		matcher.find();
@@ -177,7 +177,7 @@ public abstract class AbstractBaseParser implements IInputParser {
 	private String getVideoLinkByHref(HttpHeaders headers, String href, int qn) {
 		// 获取json
 		String newhtml = util.getContent(String.format("https://www.acfun.cn%s", href),
-				headers.getCommonHeaders("www.acfun.cn"), null);
+				headers.getCommonHeaders("www.acfun.cn"), HttpCookies.getGlobalCookies());
 
 		Matcher matcher = pVideoInfo.matcher(newhtml);
 		matcher.find();
