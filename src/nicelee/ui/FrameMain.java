@@ -17,6 +17,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 
 import nicelee.acfun.INeedLogin;
+import nicelee.acfun.PackageScanLoader;
 import nicelee.acfun.util.CmdUtil;
 import nicelee.acfun.util.ConfigUtil;
 import nicelee.acfun.util.RepoUtil;
@@ -65,6 +66,8 @@ public class FrameMain extends JFrame {
 		if (Global.saveToRepo) {
 			RepoUtil.init(false);
 		}
+		// 预扫描加载类
+		PackageScanLoader.validParserClasses.isEmpty();
 //		FrameQRCode qr = new FrameQRCode("https://www.bilibili.com/");
 //		qr.initUI();
 //		qr.dispose();

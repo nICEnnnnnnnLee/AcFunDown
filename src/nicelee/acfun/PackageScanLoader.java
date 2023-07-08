@@ -1,6 +1,8 @@
 package nicelee.acfun;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.JarURLConnection;
 import java.net.URISyntaxException;
@@ -12,26 +14,59 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import nicelee.acfun.annotations.Acfun;
+import nicelee.acfun.plugin.CustomClassLoader;
+import nicelee.acfun.plugin.Plugin;
 
 public abstract class PackageScanLoader {
 
 	private ClassLoader classLoader;
 	private List<Class<?>> validClazzList;
-	
+
 	public static List<Class<?>> validParserClasses;
 	public static List<Class<?>> validDownloaderClasses;
 	static {
 		validParserClasses = new ArrayList<Class<?>>();
 		validDownloaderClasses = new ArrayList<Class<?>>();
+		// 扫描parsers文件夹，加载自定义类名
+		Plugin parserPlg = new Plugin("parsers", "nicelee.acfun.parsers.impl");
+		CustomClassLoader ccloader = new CustomClassLoader();
+		File parserFolder = new File("parsers");
+		// 如果parsers.ini存在, 逐行读取类名, 按照顺序进行扫描
+		// 这是为了在jar包里的类加载生效之前使用, 替换原来的功能
+		// 大多数情况下不需要用到
+		File parserInit = new File(parserFolder, "parsers.ini");
+		if (parserInit.exists()) {
+			try {
+				BufferedReader reader = new BufferedReader(new FileReader(parserInit));
+				String clazzName = reader.readLine();
+				while (clazzName != null) {
+					compileAndLoad(parserPlg, ccloader, clazzName);
+					clazzName = reader.readLine();
+				}
+				reader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else if (parserFolder.exists()) {
+			// 遍历文件进行扫描
+			for (File file : parserFolder.listFiles()) {
+				String fileName = file.getName();
+				if (fileName.endsWith(".java")) {
+					String clazzName = fileName.substring(0, fileName.length() - 5);
+					compileAndLoad(parserPlg, ccloader, clazzName);
+				}
+			}
+		}
+
 		// 扫描包，加载 parser 类
 		PackageScanLoader pLoader = new PackageScanLoader() {
 			@Override
 			public boolean isValid(Class<?> klass) {
 				Acfun acfun = klass.getAnnotation(Acfun.class);
 				if (null != acfun) {
-					if("parser".equals(acfun.type())){
+					if ("parser".equals(acfun.type())) {
 						validParserClasses.add(klass);
-					}else if("downloader".equals(acfun.type())){
+					} else if ("downloader".equals(acfun.type())) {
 						validDownloaderClasses.add(klass);
 					}
 				}
@@ -41,6 +76,32 @@ public abstract class PackageScanLoader {
 		pLoader.scanRoot("nicelee.acfun");
 	}
 
+	/**
+	 *  编译并加载指定类
+	 * @param parserPlg
+	 * @param ccloader
+	 * @param clazzName
+	 */
+	private static void compileAndLoad(Plugin parserPlg, CustomClassLoader ccloader, String clazzName) {
+		// 编译类
+		if(parserPlg.isToCompile(clazzName)) {
+			parserPlg.compile(clazzName);
+		}
+		try {
+			// 加载类
+			System.out.printf("尝试加载自定义类: %s\r\n", clazzName);
+			Class<?> klass = parserPlg.loadClass(ccloader, clazzName);
+			Acfun bili = klass.getAnnotation(Acfun.class);
+			if (null != bili) {
+				if("parser".equals(bili.type())){
+					validParserClasses.add(klass);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * Class 类型是否符合预期，如果是，则加入列表
 	 * 
@@ -130,7 +191,8 @@ public abstract class PackageScanLoader {
 
 			while (jarEntries.hasMoreElements()) {
 				JarEntry jar = jarEntries.nextElement();
-				if (jar.isDirectory() || !jar.getName().endsWith(".class") || !jar.getName().startsWith(packNameWithFileSep)) {
+				if (jar.isDirectory() || !jar.getName().endsWith(".class")
+						|| !jar.getName().startsWith(packNameWithFileSep)) {
 					continue;
 				}
 				// 处理class类型
