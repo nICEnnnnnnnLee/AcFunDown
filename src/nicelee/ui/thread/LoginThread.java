@@ -1,17 +1,23 @@
 package nicelee.ui.thread;
 
-import javax.swing.JOptionPane;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.awt.Image;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpCookie;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
 
 import nicelee.acfun.INeedLogin;
+import nicelee.acfun.model.FavList;
 import nicelee.acfun.util.HttpCookies;
 import nicelee.ui.FrameQRCode;
 import nicelee.ui.Global;
@@ -60,6 +66,8 @@ public class LoginThread extends Thread {
 				} catch (MalformedURLException e) {
 					e.printStackTrace();
 				}
+				// 设置收藏夹
+				getFavList(inl);
 				System.out.println("成功登录...");
 				return;
 			}else {
@@ -114,6 +122,8 @@ public class LoginThread extends Thread {
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			}
+			// 设置收藏夹
+			getFavList(inl);
 			System.out.println("成功登录...");
 		} else {
 			//Global.index.jlHeader.addMouseListener(Global.index);
@@ -123,5 +133,28 @@ public class LoginThread extends Thread {
 		System.out.println("登录线程结束...");
 		qr.dispose();
 
+	}
+	
+	private void getFavList(INeedLogin inl) {
+		try {
+			if (Global.index.cbChannel.getItemCount() == 1) {
+				String favUrl = "https://www.acfun.cn/member/favourite";
+				String htmlStr = inl.getUtil().getContent(favUrl, new HashMap<String, String>(),
+						HttpCookies.getGlobalCookies());
+				Pattern p = Pattern.compile("window.__INITIAL_STATE__=(.*?});\\(function");
+				Matcher m = p.matcher(htmlStr);
+				m.find();
+				String jsonStr = m.group(1);
+				JSONArray list = new JSONObject(jsonStr).getJSONObject("member").getJSONObject("favorite").getJSONArray("dougaFolders");
+				for (int i = 0; i < list.length(); i++) {
+					JSONObject favlist = list.getJSONObject(i);
+					FavList fav = new FavList(favlist.getLong("folderId"),
+							favlist.getInt("resourceCount"), favlist.getString("name"));
+					Global.index.cbChannel.addItem(fav);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

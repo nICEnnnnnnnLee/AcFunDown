@@ -7,6 +7,8 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.URL;
@@ -25,12 +27,12 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import nicelee.acfun.INeedAV;
-import nicelee.acfun.enums.ChannelEnum;
+import nicelee.acfun.model.FavList;
 import nicelee.ui.item.MJTextField;
 import nicelee.ui.thread.GetVideoDetailThread;
 import nicelee.ui.thread.LoginThread;
 
-public class TabIndex extends JPanel implements ActionListener, MouseListener {
+public class TabIndex extends JPanel implements ActionListener, MouseListener, ItemListener{
 
 	/**
 	 * 
@@ -44,7 +46,7 @@ public class TabIndex extends JPanel implements ActionListener, MouseListener {
 	//new MJTextField("https://www.bilibili.com/video/av35296336");
 	JButton btnSearch = new JButton("查找");
 	JButton btnSearchNextPage = new JButton("下一页");
-	JComboBox<String> cbChannel; // 分区
+	public JComboBox<Object> cbChannel; // 分区
 	
 	JTextArea consoleArea = new JTextArea(20, 50);
 	JTabbedPane jTabbedpane;
@@ -93,12 +95,11 @@ public class TabIndex extends JPanel implements ActionListener, MouseListener {
 		btnSearchNextPage.setPreferredSize(new Dimension(90, 40));
 		
 		cbChannel = new JComboBox<>();
-		for(ChannelEnum item: ChannelEnum.values()) {
-			cbChannel.addItem(item.getDescription());
-		}
+		cbChannel.addItem("---我的收藏夹---");
 		cbChannel.setSelectedIndex(0);
-		cbChannel.addActionListener(this);
-		cbChannel.setPreferredSize(new Dimension(90, 40));
+		// cbChannel.addActionListener(this);
+		cbChannel.addItemListener(this);
+		cbChannel.setPreferredSize(new Dimension(120, 40));
 		
 		jpSearch.add(txtSearch);
 		jpSearch.add(btnSearch);
@@ -185,23 +186,38 @@ public class TabIndex extends JPanel implements ActionListener, MouseListener {
 			}
 			txtSearch.setText(modified);
 			search();
-		}else  if(e.getSource() == cbChannel){
-			// 找到分区id
-			int channelId = ChannelEnum.getChannelId(cbChannel.getSelectedItem().toString());
-			
-			// 分情况对变量进行修饰
-			String origin = txtSearch.getText();
-			String modified = null;
-			Matcher matcher = channelIdPattern.matcher(origin);
-			if(matcher.find()) {
-				modified = origin.replaceFirst("channelId=[0-9]+", "channelId=" + channelId);
-			}else {
-				modified = origin + "&channelId=" + channelId;
-			}
-			txtSearch.setText(modified);
 		}
+//		else  if(e.getSource() == cbChannel){
+//			// 找到分区id
+//			int channelId = ChannelEnum.getChannelId(cbChannel.getSelectedItem().toString());
+//			
+//			// 分情况对变量进行修饰
+//			String origin = txtSearch.getText();
+//			String modified = null;
+//			Matcher matcher = channelIdPattern.matcher(origin);
+//			if(matcher.find()) {
+//				modified = origin.replaceFirst("channelId=[0-9]+", "channelId=" + channelId);
+//			}else {
+//				modified = origin + "&channelId=" + channelId;
+//			}
+//			txtSearch.setText(modified);
+//		}
 	}
 
+	@Override
+	public void itemStateChanged(ItemEvent e) {
+		if (e.getStateChange() == ItemEvent.SELECTED) {
+            if(e.getItem() instanceof FavList) {
+            	FavList fav = (FavList) e.getItem();
+            	String url = "https://www.acfun.cn/member/favourite/folder/%d";
+            	url = String.format(url, fav.getfId());
+            	txtSearch.setText(url);
+            	txtSearch.setForeground(Color.BLACK);
+    			search();
+            }
+        }
+	}
+	
 	/**
 	 * 根据输入查找 av信息，并弹出av信息的Tab页
 	 */
@@ -212,15 +228,16 @@ public class TabIndex extends JPanel implements ActionListener, MouseListener {
 			avId = iNeedAV.getValidID(avId);
 			System.out.println("当前解析的id为：");
 			System.out.println(avId);
-			if(avId.contains(" ")) {
-				String avs[] = avId.trim().split(" ");
-				System.out.println("将弹出窗口个数： " + avs.length);
-				for(String av : avs) {
-					popVideoInfoTab(av);
-				}
-			}else {
-				popVideoInfoTab(avId);
-			}
+			popVideoInfoTab(avId);
+//			if(avId.contains(" ")) {
+//				String avs[] = avId.trim().split(" ");
+//				System.out.println("将弹出窗口个数： " + avs.length);
+//				for(String av : avs) {
+//					popVideoInfoTab(av);
+//				}
+//			}else {
+//				popVideoInfoTab(avId);
+//			}
 		}
 		
 	}
