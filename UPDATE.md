@@ -1,4 +1,11 @@
 ## UPDATE  
+* v1.2 
+	* fix #14, 修复up主所有列表链接解析
+	* fix: 支持下载某些登录才能播放的视频(e.g. ac15112793)
+	* feat: 支持视频合集链接
+	* feat: 支持收藏夹功能
+	* feat: 支持自定义解析下载
+    
 * v1.1 
     * 修复 [issue #12](https://github.com/nICEnnnnnnnLee/AcFunDown/issues/12)修复解析问题  
     * 优化 [issue #11](https://github.com/nICEnnnnnnnLee/AcFunDown/issues/11)添加自定义背景图片功能,将想要的背景图放入config文件夹下即可`config/background.png|jpg`   
