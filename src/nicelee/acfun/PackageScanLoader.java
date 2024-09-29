@@ -57,6 +57,36 @@ public abstract class PackageScanLoader {
 				}
 			}
 		}
+		
+		// 扫描downloaders文件夹，加载自定义类名
+		Plugin downloaderPlg = new Plugin("downloaders", "nicelee.acfun.downloaders.impl");
+		File downloaderFolder = new File("downloaders");
+		// 如果downloaders.ini存在, 逐行读取类名, 按照顺序进行扫描
+		// 这是为了在jar包里的类加载生效之前使用, 替换原来的功能
+		// 大多数情况下不需要用到
+		File downloadInit = new File(downloaderFolder, "downloaders.ini");
+		if (downloadInit.exists()) {
+			try {
+				BufferedReader reader = new BufferedReader(new FileReader(downloadInit));
+				String clazzName = reader.readLine();
+				while (clazzName != null) {
+					compileAndLoad(downloaderPlg, ccloader, clazzName);
+					clazzName = reader.readLine();
+				}
+				reader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else if (downloaderFolder.exists()) {
+			// 遍历文件进行扫描
+			for (File file : downloaderFolder.listFiles()) {
+				String fileName = file.getName();
+				if (fileName.endsWith(".java")) {
+					String clazzName = fileName.substring(0, fileName.length() - 5);
+					compileAndLoad(downloaderPlg, ccloader, clazzName);
+				}
+			}
+		}
 
 		// 扫描包，加载 parser 类
 		PackageScanLoader pLoader = new PackageScanLoader() {
@@ -95,6 +125,8 @@ public abstract class PackageScanLoader {
 			if (null != bili) {
 				if("parser".equals(bili.type())){
 					validParserClasses.add(klass);
+				} else if ("downloader".equals(bili.type())) {
+					validDownloaderClasses.add(klass);
 				}
 			}
 		} catch (Exception e) {
