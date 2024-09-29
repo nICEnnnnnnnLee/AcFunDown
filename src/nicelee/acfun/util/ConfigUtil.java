@@ -61,6 +61,7 @@ public class ConfigUtil {
 		}
 		System.out.println("----Config ini end...----");
 		Global.noQualityRequest = "true".equals(System.getProperty("acfun.quality.noQualityRequest"));
+		Global.debugFFmpeg = "true".equals(System.getProperty("acfun.debug.ffmpeg"));
 		//下载设置相关
 		int fixPool = Integer.parseInt(System.getProperty("acfun.download.poolSize"));
 		Global.downLoadThreadPool = Executors.newFixedThreadPool(fixPool);
