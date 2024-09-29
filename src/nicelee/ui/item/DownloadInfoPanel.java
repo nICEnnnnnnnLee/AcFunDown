@@ -350,4 +350,8 @@ public class DownloadInfoPanel extends JPanel implements ActionListener {
 		this.avid = avid;
 	}
 
+	public int getPage() {
+		return page;
+	}
+
 }
