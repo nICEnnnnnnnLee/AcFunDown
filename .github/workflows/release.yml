@@ -20,16 +20,16 @@ jobs:
     runs-on: ubuntu-latest
    
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up JDK 1.8
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
         java-version: '8'  
      
     - name: Read tag_latest
       id: tag_latest
-      uses:  ashley-taylor/read-json-property-action@v1.1
+      uses:  ashley-taylor/read-json-property-action@v1.2
       with:
         path: ./.github/release.json
         property: tag_latest
@@ -98,7 +98,7 @@ jobs:
         zip -rm AcfunDown.v${{steps.tag_latest.outputs.value}}.release.zip ./LICENSE/
 
     - name: Create Release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         tag_name: V${{steps.tag_latest.outputs.value}}
         name: AcfunDown - v${{steps.tag_latest.outputs.value}}
