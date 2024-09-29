@@ -1,4 +1,11 @@
 ## UPDATE  
+* v1.3 
+	* fix: 修复两种`aa[0-9]+`类型链接的解析冲突
+    * feat: 添加`1080P60`、`720P60`清晰度支持
+    * feat: 提供选项`acfun.quality.noQualityRequest = true/false`，可以不尝试获取视频实际清晰度，直接提供所有选择。 #17
+    * feat: 添加打印信息到`download.txt`的模板`downloader` #17
+    * feat: 添加调用`N_m3u8DL-CLI`下载m3u8的模板`downloader` #17
+    * feat: 提供选项`acfun.debug.ffmpeg= true/false `，可以控制是否打印ffmpeg的输出
 * v1.2 
 	* fix #14, 修复up主所有列表链接解析
 	* fix: 支持下载某些登录才能播放的视频(e.g. ac15112793)
