@@ -15,11 +15,11 @@ import nicelee.acfun.util.HttpCookies;
 import nicelee.acfun.util.HttpHeaders;
 import nicelee.acfun.util.Logger;
 
-//@Acfun(name = "aaParser", note = "番剧")
+@Acfun(name = "aaParser", note = "番剧")
 public class AABangumiParser extends AbstractBaseParser {
 
 //	private final static Pattern pattern = Pattern.compile("https://www.acfun.cn/bangumi/(aa[0-9]+)");
-	private final static Pattern pattern = Pattern.compile("(aa[0-9]+)");
+	private final static Pattern pattern = Pattern.compile("(?<!a/)(aa[0-9]+)");
 	private String bangumiId;
 
 	public AABangumiParser(Object... obj) {
@@ -87,7 +87,7 @@ public class AABangumiParser extends AbstractBaseParser {
 
 			LinkedHashMap<Integer, String> links = new LinkedHashMap<Integer, String>();
 			try {
-				int qnList[] = new int[] { 4, 3, 2, 1, 0 };
+				int qnList[] = VideoQualityEnum.availableQNs();
 				for (int qn : qnList) {
 					if (getVideoLink) {
 						String link = getVideoLink(bangumiId, "" + clip.getcId(), qn, 0);
