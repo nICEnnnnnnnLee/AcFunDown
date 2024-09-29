@@ -31,6 +31,7 @@ public class Global {
 	
 	public static boolean useRepo = true; //从仓库判断是否需要下载
 	public static boolean saveToRepo = true; //使用仓库保存下载成功的记录
+	public static boolean noQualityRequest = true; //不尝试获取视频的清晰度，直接提供所有选项
 	
 	public static String formatStr = "avTitle-pDisplay-clipTitle-qn";
 	public static boolean doRenameAfterComplete = true;

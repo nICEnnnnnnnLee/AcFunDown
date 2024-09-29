@@ -16,6 +16,7 @@ import nicelee.acfun.util.HttpCookies;
 import nicelee.acfun.util.HttpHeaders;
 import nicelee.acfun.util.HttpRequestUtil;
 import nicelee.acfun.util.Logger;
+import nicelee.ui.Global;
 
 public abstract class AbstractBaseParser implements IInputParser {
 
@@ -89,7 +90,11 @@ public abstract class AbstractBaseParser implements IInputParser {
 			LinkedHashMap<Integer, String> links = new LinkedHashMap<Integer, String>();
 			try {
 				if (qnList == null) {
-					qnList = getVideoQNList(avId, String.valueOf(clip.getcId())); // 请求1次
+					if(Global.noQualityRequest) {
+						qnList = VideoQualityEnum.availableQNs();
+					} else {
+						qnList = getVideoQNList(avId, String.valueOf(clip.getcId())); // 请求1次
+					}
 				}
 				for (int qn : qnList) {
 					if (getVideoLink) {
