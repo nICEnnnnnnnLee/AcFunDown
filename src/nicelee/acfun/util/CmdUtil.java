@@ -144,7 +144,8 @@ public class CmdUtil {
 					File file = new File(Global.savePath + prefix + "/" + prefix + "-part" + i + suffix);
 					fList.add(file);
 					fSize += file.length();
-					Logger.println(file.getAbsolutePath());
+					if (i == part)
+						Logger.println(file.getAbsolutePath());
 				}
 				Logger.println("转码后文件大小: " + videoFile.length());
 				Logger.println("转码前文件大小和: " + fSize);
