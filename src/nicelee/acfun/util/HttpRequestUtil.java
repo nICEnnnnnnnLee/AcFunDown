@@ -28,8 +28,6 @@ import nicelee.ui.Global;
 public class HttpRequestUtil {
 
 	private static CookieManager defaultManager = new CookieManager();
-	// 下载缓存区
-	private byte[] buffer = new byte[1024 * 1024];
 	// 下载文件大小状态
 	private long downloadedFileSize;
 	private long totalFileSize;
@@ -181,7 +179,7 @@ public class HttpRequestUtil {
 				reader.close();
 				throw e;
 			}
-
+			byte[] buffer = new byte[1024 * 1024];
 			int lenRead = inn.read(buffer);
 			downloadedFileSize = offset + lenRead;
 			while (lenRead > -1) {
